@@ -1,0 +1,445 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="./javascripts/jquery.js"></script>
+    <script>var $ = jQuery.noConflict(true);</script>
+    <script type="text/javascript" src="./javascripts/materialize.js"></script>
+    <link rel="stylesheet" href="./stylesheets/materialize.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/profile.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/style.css" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .toast {
+            word-break: break-word;
+        }
+
+
+        .row {
+            margin-bottom: 0;
+        }
+
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media only screen and (min-width: 993px) {
+            nav a.button-collapse {
+                display: block;
+            }
+        }
+
+        nav {
+            height: 64px;
+        }
+
+        @keyframes bodyrender {
+            0% {
+                opacity: 0;
+                background-color: #404040;
+            }
+
+            100% {
+                opacity: 1;
+                background-color: #404040;
+            }
+        }
+
+        body {
+            animation-name: bodyrender;
+            animation-timing-function: ease-in-out;
+            animation-duration: 0.5s;
+            color: white;
+        }
+
+
+        .lightdiv {
+            cursor: pointer;
+            padding: 10px;
+            margin: 0px 10px;
+        }
+
+
+
+        .mdi-spin {
+            -webkit-animation: mdi-spin 10s infinite linear;
+            animation: mdi-spin 10s infinite linear;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+
+
+
+        @-webkit-keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        @keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        .deviceparent:hover {
+            box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+            width: 96%;
+        }
+
+
+        .deviceparent {
+            background-color: #404040;
+            width: 90%;
+            padding: 20px;
+        }
+
+        .frame {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+        }
+
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            height:2px;
+            background: transparent;
+            margin-top:10px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            height:2px;
+            margin-top:10px
+        }
+
+</style>
+
+</head>
+<body class="row" style="background-color:#303030">
+<nav style="background-color:#ffa500">
+    <div class="nav-wrapper row">
+        <div class="col l2 m2 s2 left">
+                <span>
+                    <a href="home">
+                        <img src="images/dsn_pri_logo2.png" height="100%" />
+                    </a>
+                </span>
+        </div>
+
+        <div class="col l8 m8 s8 center ">
+            <span>Edit Space</span>
+        </div>
+        <div class="col l2 m2 s2 right">
+            <a href="#" data-activates="mobileview" class="button-collapse right"><i class="material-icons">menu</i></a>
+            <ul id="mobileview" class="side-nav">
+                <li>
+                    <div class="userView">
+                        <div class="background" style="background-color:#404040"></div>
+                        <a href="edit_profile" class="waves-effect circle red">
+                            <span style="padding: 20px;font-size: 30px;position: relative;top: 10px;left:0">D</span>
+                        <% if (user_info) { %>
+   
+                            <a href="edit_profile"><span class="white-text name"><%= user_info.name %></span></a>
+                            <a href="edit_profile"><span class="white-text email"><%= user_info.email %></span></a>
+                    <% } %>
+                    </div>
+                </li>
+                <!--<li><div class="divider"></div></li>-->
+                <!--<li><a class="subheader">Subheader</a></li>-->
+                <li><a href="home" class="waves-effect waves-orange"><i class="material-icons">store</i>Home</a></li>
+                <li><a href="create_floor" class="waves-effect waves-orange"><i class="material-icons">create_new_folder</i>Create New Space</a></li>
+                <li><a href="edit_floor" class="waves-effect waves-orange"><i class="material-icons">mode_edit</i>Edit Space</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="temp_control" class="waves-effect waves-orange"><i class="material-icons">ac_unit</i>Temperature Control</a></li>
+                <li><a href="analytics" class="waves-effect waves-orange"><i class="material-icons">multiline_chart</i>Analytics</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="settings" class="waves-effect waves-orange"><i class="material-icons">settings</i>Settings</a></li>
+                <li id="logout"><a href="/logout" class="waves-effect waves-orange"><i class="material-icons">settings_power</i>Sign Out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="row">&nbsp;</div>
+
+<div class="row">
+    <div class="col l6 m12 s12 center">
+        <div class="input-field col s12">
+            <select>
+                <option>Choose Floor</option>
+                <% if (floordata){ %>
+                <option value="<%= floordata.floor_name %>" selected><%= floordata.floor_name %></option>
+                <% } %>
+            </select>
+            <label>Select Floor</label>
+        </div>
+
+        
+    </div>
+    <div class="col l6 m12 s12 center">
+        <div class="input-field col  s12">
+            <select>
+                <option>Choose Room</option>
+                <% if (room_data){ %>
+                <option value="<%= room_data.room_name %>" selected><%= room_data.room_name %></option>
+                <% } %>
+            </select>
+            <label>Select Room</label>
+        </div>
+    </div>
+
+</div>
+
+<br />
+<div class="row z-depth-2" id="masterbedroom"  style="background-color:#505050;padding:10px;position:relative;height:310px">
+    <% if (floordata && room_data){ %>
+    <div style="padding:10px;background-color:#404040" class="card z-depth-4">
+        <i class="material-icons left">adjust</i>
+        <span style="position:relative;top:0px;color:white"><%= floordata.floor_name %> > <%= room_data.room_name %></span>
+    </div>
+    <% } else{ %> 
+    <div style="padding:10px;background-color:#404040" class="card z-depth-4">
+        <i class="material-icons left">adjust</i>
+        <span style="position:relative;top:0px;color:white">No floor > No room</span>
+    </div>
+    <% } %>
+   
+ <div id="makeMeScrollable" class="left" style="position:relative;overflow-x: scroll;overflow-y:hidden;white-space: nowrap;height:230px;width:100%">
+
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">lightbulb_outline</i>
+                <br>
+                Bed Side Light
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">lightbulb_outline</i>
+                <br>
+                Door Side Light
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+
+        <div style="padding:0px;width:220px;display:inline-block" id="showeditor">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons mdi-spin" id="fanclassmb" style="font-size:100px">toys</i>
+                <br>
+                Fan
+                <hr>
+                <span style="color:#ffa500"><span id="fancountmb">On</span></span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">ac_unit</i>
+                <br>
+                Bed Side AC
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">device_hub</i>
+                <br>
+                Mobile Switch
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">device_hub</i>
+                <br>
+                Laptop Switch
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">tv</i>
+                <br>
+                TV
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">videogame_asset</i>
+                <br>
+                XBox
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">local_laundry_service</i>
+                <br>
+                Laundry Machine
+                <hr>
+                <span style="color:#ffa500">Off</span>
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">kitchen</i>
+                <br>
+                Refrigerators
+                <hr>
+                <span style="color:#ffa500">On</span>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+<br />
+
+
+<div class="row z-depth-2" id="showeditordiv" style="background-color:#505050;padding:10px;display:none">
+    <div style="padding:10px;background-color:#404040" class="card z-depth-4">
+        <i class="material-icons left">edit</i>
+        <span style="position:relative;top:0px;color:white">Fan</span>
+
+        <div class=" waves-effect waves-light center right" style="padding:0px 10px" onclick="$('#showeditordiv').toggle()">
+            <i class="material-icons">close</i>
+        </div>
+
+        <div class=" waves-effect waves-light center right" style="padding:0px 10px">
+            <i class="material-icons">save</i>
+        </div>
+
+        <div class=" waves-effect waves-light center right" style="padding:0px 10px">
+            <i class="material-icons">delete_forever</i>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col l2 m4 s12 center " id="fanclassparentmb" style="padding:0px">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons mdi-spin" id="fanclassmb1" style="font-size:100px">toys</i>
+                <br>
+                Fan
+                <hr>
+                <span style="color:#ffa500"><span id="fancountmb1">On</span></span>
+            </div>
+        </div>
+
+        <div class="col l6 m8 s12">
+
+            <div class="input-field col l12 m12 s12" style="margin-top:10px;color:white">
+                <i class="material-icons prefix">edit</i>
+                <input id="namehere" type="text" required value="Fan">
+                <label for="namehere">Edit Name</label>
+            </div>
+
+            <div class="col l12 m12 s12 center">
+                <div class="input-field col s12">
+                    <select>
+                        <option value="0" disabled selected>Choose Category</option>
+                        <option value="1">Fan</option>
+                        <option value="2">Light</option>
+                        <option value="3">AC</option>
+                        <option value="4">TV</option>
+                        <option value="5">XBox</option>
+                        <option value="5">Smart Device</option>
+                    </select>
+                    <label>Edit Appliance Category</label>
+                </div>
+            </div>
+
+            <div class="col l12 m12 s12 center">
+                <div class="input-field col s12">
+                    <select>
+                        <option value="0" disabled selected>Choose Status</option>
+                        <option value="1">On</option>
+                        <option value="2">Off</option>
+                    </select>
+                    <label>Current Status</label>
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('#showeditor').click(function () {
+            $('#showeditordiv').css({ 'display': 'block' });
+        });
+    });
+
+
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+
+
+
+    $(document).ready(function () {
+        $(".button-collapse").sideNav({
+            menuWidth: 280,
+            edge: 'right',
+            closeOnClick: false,
+            draggable: true
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="./javascripts/jquery.js"></script>
+    <script>var $ = jQuery.noConflict(true);</script>
+    <script type="text/javascript" src="./javascripts/materialize.js"></script>
+    <link rel="stylesheet" href="./stylesheets/materialize.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/profile.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/style.css" media="screen,projection" />
+    <link rel="Stylesheet" type="text/css" href="./stylesheets/sliderstyle.css" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="socket.io.min.js"></script>
+    <script type="text/javascript" src="./javascripts/mqtt.js"></script>
+    <style>
+        .toast {
+            word-break: break-word;
+        }
+
+
+        .row {
+            margin-bottom: 0;
+        }
+
+        * {
+            -webkit-user-select: none;  
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media only screen and (min-width: 993px) {
+            nav a.button-collapse {
+                display: block;
+            }
+        }
+
+        nav {
+            height: 64px;
+        }
+
+        @keyframes bodyrender {
+            0% {
+                opacity: 0;
+                background-color: #303030;
+            }
+
+            100% {
+                opacity: 1;
+                background-color: #303030;
+            }
+        }
+
+        body {
+            animation-name: bodyrender;
+            animation-timing-function: ease-in-out;
+            animation-duration: 0.5s;
+            color: white;
+        }
+
+
+        .lightdiv {
+            cursor: pointer;
+            padding: 10px;
+            margin: 0px 10px;
+        }
+
+
+
+        .mdi-spin {
+            -webkit-animation: mdi-spin 10s infinite linear;
+            animation: mdi-spin 10s infinite linear;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+
+
+
+        @-webkit-keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        @keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        .deviceparent:hover {
+            box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+            width: 96%;
+        }
+
+
+        .deviceparent {
+            background-color: #404040;
+            width: 90%;
+            padding: 20px;
+        }
+
+        .frame {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+        }
+
+        a {
+            color: white;
+        }
+
+        .modal {
+            background-color: #404040;
+        }
+
+        .modal-content {
+            background-color: #404040;
+        }
+
+        .modal .modal-footer {
+            background-color: #404040;
+        }
+
+        .modal.modal-fixed-footer .modal-footer {
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .row {
+            border: 0px solid white;
+        }
+
+        .lightsetting {
+            position: relative;
+            top: 20px;
+        }
+
+
+        .modal.bottom-sheet {
+            max-height: 100%;
+            height: 100%;
+        }
+
+
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            height:2px;
+            background: transparent;
+            margin-top:10px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            height:2px;
+            margin-top:10px
+        }
+
+
+    </style>
+    <script>
+        function bedsideslider(){
+            var slidetpk="dns/test/light/slider";
+            var bed= document.getElementById('gstbedslide').value;
+            socket.emit('bedslide', bed, slidetpk);
+        }
+       
+        
+    </script>
+
+    <script>
+        var socket = io.connect();
+        function lightsubscribeTopic() {
+            var y=  document.getElementById('chkbxlight');
+            state=y.checked;
+            var topic="dns/test/light";
+            alert(state);
+            socket.emit('ONLIGHT',topic, state);
+
+        }
+    
+        function fansubscribeTopic()
+        {
+            var m = document.getElementById('chkbxfan');
+            var state= m.checked;
+            var topic2="dns/test/fan";
+            alert(state);
+            socket.emit('ONFAN', topic2, state);
+        }
+
+    </script>
+</head>
+<body class="row" style="background-color:#303030">
+<nav style="background-color:#ffa500">
+    <div class="nav-wrapper row">
+        <div class="col l2 m2 s2 left">
+                <span>
+                    <a href="home">
+                        <img src="images/dsn_pri_logo2.png" height="100%" />
+                    </a>
+                </span>
+        </div>
+
+        <div class="col l8 m8 s8 center ">
+            <span>Dashboard</span>
+        </div>
+        <div class="col l2 m2 s2 right">
+            <a href="#" data-activates="mobileview" class="button-collapse right"><i class="material-icons">menu</i></a>
+            <ul id="mobileview" class="side-nav">
+                <li>
+                    <div class="userView">
+                        <div class="background" style="background-color:#404040"></div>
+                        <a href="#" class="" id="popup">
+                            <% if (user_image && user_info) { %>
+                                <span><img id="profile_icon" src="uploads/<%= user_image.file_name  %>"/></span>
+                            <% } else{ %>
+                             <span><img id="profile_icon" src="uploads/profile.png"></span>
+                        </a>
+                            <% } %>
+                    <% if (user_info) { %>
+   
+                            <a href="edit_profile"><span class="white-text name"><%= user_info.name %></span></a>
+                            <a href="edit_profile"><span class="white-text email"><%= user_info.email %></span></a>
+                    <% } %>
+                <form method="post" action="/upload" enctype='multipart/form-data'>
+                     <div id="div1" style="display:none;">
+                            <input type='file' name="image" onchange="readURL(this);" />
+                            <img id="blah" src="#" alt="your image" />
+                            <div id="div8" style="text-align: center;">
+                            <input id="loginDisplay_button" type="submit" value="upload">
+                                      
+                    </div>
+                    
+                    </div>
+                </form>
+                </li>
+                <!--<li><div class="divider"></div></li>-->
+                <!--<li><a class="subheader">Subheader</a></li>-->
+                <li><a href="home" class="waves-effect waves-orange"><i class="material-icons">store</i>Home</a></li>
+                <li><a href="create_floor" class="waves-effect waves-orange"><i class="material-icons">create_new_folder</i>Create New Space</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="analytics" class="waves-effect waves-orange"><i class="material-icons">multiline_chart</i>Analytics</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="scheduling" class="waves-effect waves-orange"><i class="material-icons">Scheduling</i>Scheduling</a></li>
+                <li><a href="settings" class="waves-effect waves-orange"><i class="material-icons">settings</i>Settings</a></li>
+                <li id="logout"><a href="/logout" class="waves-effect waves-orange"><i class="material-icons">settings_power</i>Sign Out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="row">&nbsp;</div>
+<!-- Modal Structure -->
+<% if(floordata){ %>
+<% for(var i=0; i < floordata.length; i++) { %>
+<div id="modal1" class="modal bottom-sheet">
+    <div class="modal-content ">
+
+        <span class="center"><%= floordata[i].floor_name %></span>
+
+        <div class="row" style="margin-top:50px">
+            <div class="col l6 m6 s6">
+                All <%= floordata[i].device_name %> On
+            </div>
+            <div class="col l6 m6 s6">
+                <div class="switch">
+                    <label>
+                        <input type="checkbox" id="chkbxfan" onclick="fansubscribeTopic()">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div style="padding:10px;background-color:#404040;margin-top:50px" class="card z-depth-4">
+            <i class="material-icons left">adjust</i>
+            <span style="position:relative;top:0px;color:white;cursor:pointer"><%= floordata[i].room_name%></span>
+        </div>
+
+
+
+
+        <div class="row" style="margin-top:50px">
+            <div class="col l6 m6 s6">
+                <%= floordata[i].device_name %> 
+            </div>
+            <div class="col l6 m6 s6">
+                <div class="switch">
+                    <label>
+                        <input type="checkbox">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div style="padding:10px;background-color:#404040;margin-top:50px" class="card z-depth-4">
+            <i class="material-icons left">adjust</i>
+            <span style="position:relative;top:0px;color:white;cursor:pointer"><%= floordata[i].room_name%></span>
+        </div>
+
+
+
+
+        <div class="row" style="margin-top:50px">
+            <div class="col l6 m6 s6">
+            <%= floordata[i].device_name %> 
+            </div>
+            <div class="col l6 m6 s6">
+                <div class="switch">
+                    <label>
+                        <input type="checkbox">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <div class="modal-footer center">
+        <a href="home" class="modal-action modal-close btn orange waves-light waves-effect center">Save</a>
+    </div>
+
+</div>
+
+
+
+<!-- second one -->
+<div id="modal2" class="modal bottom-sheet">
+    <div class="modal-content ">
+
+        <span class="center"><%= floordata[i].floor_name %></span>
+
+        <div class="row" style="margin-top:50px">
+            <div class="col l6 m6 s6">
+                All Lights On
+            </div>
+            <div class="col l6 m6 s6">
+                <div class="switch">
+                    <label>
+                        <input type="checkbox" id="chkbxlight" onclick="lightsubscribeTopic();">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div style="padding:10px;background-color:#404040;margin-top:50px" class="card z-depth-4">
+            <i class="material-icons left">adjust</i>
+            <span style="position:relative;top:0px;color:white;cursor:pointer"><%= floordata[i].room_name%></span>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col l6 m6 s6 left">
+                <span class="lightsetting">Bed Side Light</span>
+            </div>
+            <div class="col l6 m6 s6 right">
+
+                <form action="#">
+                    <p class="range-field">
+                        <input type="range" value="10" id="test5" min="0" max="100" />
+                    </p>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col l6 m6 s6 left">
+                <span class="lightsetting">Door Light</span>
+            </div>
+            <div class="col l6 m6 s6 right">
+
+                <form action="#">
+                    <p class="range-field">
+                        <input type="range" value="10" id="test4" min="0" max="100" />
+                    </p>
+                </form>
+
+            </div>
+
+        </div>
+
+
+
+        <div style="padding:10px;background-color:#404040;margin-top:50px" class="card z-depth-4">
+            <i class="material-icons left">adjust</i>
+            <span style="position:relative;top:0px;color:white;cursor:pointer"><%= floordata[i].room_name%></span>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col l6 m6 s6 left">
+                <span class="lightsetting">Bed Side Light</span>
+            </div>
+            <div class="col l6 m6 s6 right">
+
+                <form action="#">
+                    <p class="range-field">
+                        <input type="range" value="10" id="gstbedslide" min="0" max="100" onmouseup="bedsideslider()"/>
+                    </p>
+                </form>
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <div class="modal-footer center">
+        <a href="home" class="modal-action modal-close btn orange waves-light waves-effect center">Save</a>
+    </div>
+
+</div>
+<div class="z-depth-2" id="groundfloor" style="background-color:#505050;padding:10px;position:relative;height:310px">
+    <div style="padding:10px;background-color:#404040" class="card z-depth-4">
+        <i class="material-icons left">adjust</i>
+        <span style="position:relative;top:0px;color:white;cursor:pointer" onclick="location.href = 'room';"><%= floordata[i].floor_name %></span>
+        <i class="material-icons right waves-effect waves-red circle" onclick="location.href = 'analytics'">multiline_chart</i>
+    </div>
+
+    <div id="makeMeScrollable1" class="left" style="position:relative;overflow-x: scroll;overflow-y:hidden;white-space: nowrap;height:230px;width:100%">
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <a href="#modal2">
+                <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                    <i class="material-icons" style="font-size:100px">lightbulb_outline</i>
+                    <br>
+                    <span style="color:#ffa500">10 Lights On</span>
+                    <hr>
+                    20 Connected
+                </div>
+            </a>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <a href="#modal1">
+                <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                    <i class="material-icons mdi-spin" id="fanclassgf" style="font-size:100px">toys</i>
+                    <br>
+                    <span style="color:#ffa500"><span id="fancountgf">2</span>  <%= floordata[i].device_name  %> On</span>
+                    <hr>
+                    3 Connected
+                </div>
+            </a>
+        </div>
+        <div style="padding:0px;width:220px;display:inline-block" onclick="location.href = 'room';">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">present_to_all</i>
+                <br>
+                <span style="color:#ffa500">View All Devices</span>
+                <hr>
+                <%= floordata[i].floor_name %>
+            </div>
+        </div>
+
+    </div>
+</div>
+<% } %>
+<% } else{ %>  
+<h5> No floor added</h5>
+<% } %>
+<br />
+
+
+<script type="text/javascript">
+
+    function lightchk() {
+        var checkbox = document.getElementById('chkbxlight');
+        alert('checkbox value: ' + checkbox.checked);
+    }
+
+    function fanchk() {
+        var checkbox = document.getElementById('chkbxfan');
+        alert('checkbox value' + checkbox.checked);
+    }
+
+
+
+    $(document).ready(function () {
+        // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal').modal();
+    });
+
+
+    $(document).ready(function () {
+        mbctr = 1;
+        $('#fanclassparentgf').click(function () {
+            mbctr++;
+            if (mbctr % 2 == 0) {
+                $('#fanclassgf').removeClass('mdi-spin');
+                $('#fancountgf').html('0');
+                materialtoast('Ground Floor all Fans Off', 2000, 'red');
+            }
+            else {
+                $('#fanclassgf').addClass('mdi-spin');
+                $('#fancountgf').html('3');
+                materialtoast('Ground Floor all Fans On', 2000, 'red');
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        mbctr = 1;
+        $('#fanclassparentff').click(function () {
+            mbctr++;
+            if (mbctr % 2 == 0) {
+                $('#fanclassff').removeClass('mdi-spin');
+                $('#fancountff').html('0');
+                materialtoast('First Floor all Fans Off', 2000, 'red');
+            }
+            else {
+                $('#fanclassff').addClass('mdi-spin');
+                $('#fancountff').html('3');
+                materialtoast('First Floor all Fans On', 2000, 'red');
+            }
+        });
+    });
+
+
+
+    $(document).ready(function () {
+        $("#deletemegf").click(function () {
+            if (confirm('This will delete and clear all the settings for Ground Floor. Proceed?')) {
+                $('#groundfloor').remove();
+                materialtoast('Ground Floor deleted', Infinity, 'red');
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("#deletemeff").click(function () {
+            if (confirm('This will delete and clear all the settings for First Floor. Proceed?')) {
+                $('#firstfloor').remove();
+                materialtoast('First Floor deleted', Infinity, 'red');
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        $("#logout").click(function () {
+            if (confirm('Are you sure you want to Logout?')) {
+                location.href = 'login.html';
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        $(".button-collapse").sideNav({
+            menuWidth: 280,
+            edge: 'right',
+            closeOnClick: false,
+            draggable: true
+        });
+    });
+    $(document).ready(function () {
+    $("#popup").click(function(){
+        $("#div1").fadeToggle();
+       
+    });
+   
+});
+     function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah')
+                        .attr('src', e.target.result)
+                        .width(150)
+                        .height(200);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+</script>
+</body>
+</html>

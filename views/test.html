@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="./javascripts/jquery.js"></script>
+    <script type="text/javascript" src="./javascripts/materialize.js"></script>
+    <link rel="stylesheet" href="./stylesheets/materialize.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/profile.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheet/innercss.css" media="screen,projection" />
+    <!-- <link rel="stylesheet" href="./stylesheet/style.css" media="screen,projection" />-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="http://localhost:2000/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+
+    function redirect()
+        {
+            window.location.href="/";
+        }
+    </script>
+</head>
+<body class="row" id="body"  style="background-color:#404040">
+        <% if(message) { %>
+
+        	<p style = color:red;><%= message %></p>
+
+       
+    	<% } %>
+    	<div class="col l12 m12 s12" style="margin-top:30px">
+            <button class="btn waves-effect waves-light samebgeverywhere" type="submit" onclick='redirect()'>login<i class="material-icons right">send</i></button>
+</body>    	
+
+</html>

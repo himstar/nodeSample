@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="./javascripts/jquery.js"></script>
+    <script>var $ = jQuery.noConflict(true);</script>
+    <script type="text/javascript" src="./javascripts/materialize.js"></script>
+    <link rel="stylesheet" href="./stylesheets/materialize.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/profile.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/style.css" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .toast {
+            word-break: break-word;
+        }
+
+
+        .row {
+            margin-bottom: 0;
+        }
+
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media only screen and (min-width: 993px) {
+            nav a.button-collapse {
+                display: block;
+            }
+        }
+
+        nav {
+            height: 64px;
+        }
+
+        @keyframes bodyrender {
+            0% {
+                opacity: 0;
+                background-color: #404040;
+            }
+
+            100% {
+                opacity: 1;
+                background-color: #404040;
+            }
+        }
+
+        body {
+            animation-name: bodyrender;
+            animation-timing-function: ease-in-out;
+            animation-duration: 0.5s;
+            color: white;
+        }
+
+
+        .lightdiv {
+            cursor: pointer;
+            padding: 10px;
+            margin: 0px 10px;
+        }
+
+
+
+        .mdi-spin {
+            -webkit-animation: mdi-spin 10s infinite linear;
+            animation: mdi-spin 10s infinite linear;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+
+
+
+        @-webkit-keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        @keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        .deviceparent:hover {
+            box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+            width: 96%;
+        }
+
+
+        .deviceparent {
+            background-color: #404040;
+            width: 90%;
+            padding: 20px;
+        }
+
+        .frame {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            height:2px;
+            background: transparent;
+            margin-top:10px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            height:2px;
+            margin-top:10px
+        }
+    </style>
+</head>
+<body class="row" style="background-color:#303030">
+<nav style="background-color:#ffa500">
+    <div class="nav-wrapper row">
+        <div class="col l2 m2 s2 left">
+                <span>
+                    <a href="home">
+                        <img src="images/dsn_pri_logo2.png" height="100%" />
+                    </a>
+                </span>
+        </div>
+
+        <div class="col l8 m8 s8 center ">
+            <span>Settings</span>
+        </div>
+        <div class="col l2 m2 s2 right">
+            <a href="#" data-activates="mobileview" class="button-collapse right"><i class="material-icons">menu</i></a>
+            <ul id="mobileview" class="side-nav">
+                <li>
+                    <div class="userView">
+                        <div class="background" style="background-color:#404040"></div>
+                        <a href="edit_profile" class="waves-effect circle red">
+                            <span style="padding: 20px;font-size: 30px;position: relative;top: 10px;left:0">D</span>
+                        </a>
+                        <% if (user_info) { %>
+   
+                            <a href="edit_profile"><span class="white-text name"><%= user_info.name %></span></a>
+                            <a href="edit_profile"><span class="white-text email"><%= user_info.email %></span></a>
+                    <% } %>
+                    </div>
+                </li>
+                <!--<li><div class="divider"></div></li>-->
+                <!--<li><a class="subheader">Subheader</a></li>-->
+                <li><a href="home" class="waves-effect waves-orange"><i class="material-icons">store</i>Home</a></li>
+                <li><a href="create_floor" class="waves-effect waves-orange"><i class="material-icons">create_new_folder</i>Create New Space</a></li>
+                <li><a href="edit_floor" class="waves-effect waves-orange"><i class="material-icons">mode_edit</i>Edit Space</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="temp_control" class="waves-effect waves-orange"><i class="material-icons">ac_unit</i>Temperature Control</a></li>
+                <li><a href="analytics" class="waves-effect waves-orange"><i class="material-icons">multiline_chart</i>Analytics</a></li>
+                <li id="logout"><a href="/logout" class="waves-effect waves-orange"><i class="material-icons">settings_power</i>Sign Out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="row">&nbsp;</div>
+
+<div class="row">
+
+    <div id="modal2" class="modal bottom-sheet" style="background-color:#404040">
+        <div class="modal-content " style="background-color:#404040">
+            <h5 class="center">Enter Password</h5>
+
+            <div class="col l12 m12 s12 center " style="background-color:#404040;padding:0">
+                <div class="input-field col l12 m12 s12 " style="margin-top:10px;color:white;background-color:#404040;padding:0">
+                    <i class="material-icons prefix">vpn_key</i>
+                    <input id="roomhere" type="password"  required value="wifipassword@123">
+                    <label for="roomhere">Enter Wifi Password</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background-color:#404040;padding:0;padding-right:20px">
+            <a href="#!" class="modal-action modal-close waves-effect orange waves-light btn " onclick="materialtoast('Wifi Connected', 2000, 'red')">Proceed</a>
+        </div>
+    </div>
+
+
+
+
+
+</div>
+
+
+<div class="z-depth-2" id="groundfloor1" style="background-color:#505050;padding:10px;position:relative;height:330px">
+    <div style="padding:10px;background-color:#404040" class="card z-depth-4">
+        <i class="material-icons left">adjust</i>
+        <span style="position:relative;top:0px;color:white;" >Select your Home Wifi Router</span>
+    </div>
+
+    <div id="makeMeScrollable1" class="left" style="position:relative;overflow-x: scroll;overflow-y:hidden;white-space: nowrap;height:250px;width:100%">
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <a href="#modal2">
+                <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                    <i class="material-icons" style="font-size:100px;color:white">signal_wifi_4_bar_lock</i>
+                    <br>
+                    <span style="color:#ffa500">Wifi 1</span>
+                    <hr>
+                    <span style="color:white">Good Strength</span>
+                    <br />
+                    <span style="color:white">Password Protected</span>
+
+                </div>
+            </a>
+        </div>
+        <div style="padding:0px;width:220px;display:inline-block">
+            <a href="#modal2">
+                <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                    <i class="material-icons" style="font-size:100px;color:white">wifi</i>
+                    <br>
+                    <span style="color:#ffa500">Wifi 2</span>
+                    <hr>
+                    <span style="color:white">Good Strength</span>
+                    <br />
+                    <span style="color:white">Open Network</span>
+                </div>
+            </a>
+        </div>
+        <div style="padding:0px;width:220px;display:inline-block">
+            <a href="#modal2">
+                <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                    <i class="material-icons" style="font-size:100px;color:white">perm_scan_wifi</i>
+                    <br>
+                    <span style="color:#ffa500">Wifi 3</span>
+                    <hr>
+                    <span style="color:white">Poor Strength</span>
+                    <br />
+                    <span style="color:white">Password Protected</span>
+                </div>
+            </a>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+
+<br />
+
+<div class="row z-depth-2" id="groundfloor" style="background-color:#505050;padding:10px;position:relative;height:310px">
+    <div style="padding:10px;background-color:#404040" class="card z-depth-4">
+        <i class="material-icons left">adjust</i>
+        <span style="position:relative;top:0px;color:white;">Select your Home</span>
+    </div>
+
+    <div id="makeMeScrollable" class="left" style="position:relative;overflow-x: scroll;overflow-y:hidden;white-space: nowrap;height:230px;width:100%">
+
+        <div style="padding:0px;width:220px;display:inline-block" onclick="location.href = 'home'">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px;color:white">store_mall_directory</i>
+                <br>
+                <span style="color:white">Home</span>
+                <hr>
+                <span style="color:#ffa500">30 Devices</span>
+            </div>
+        </div>
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $("#deletemegf").click(function () {
+            if (confirm('This will delete and clear all the settings for Ground Floor. Proceed?')) {
+                $('#groundfloor').remove();
+                materialtoast('Ground Floor deleted', Infinity, 'red');
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("#deletemeff").click(function () {
+            if (confirm('This will delete and clear all the settings for First Floor. Proceed?')) {
+                $('#firstfloor').remove();
+                materialtoast('First Floor deleted', Infinity, 'red');
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal').modal();
+    });
+
+
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+
+
+    $(document).ready(function () {
+        $(".button-collapse").sideNav({
+            menuWidth: 280,
+            edge: 'right',
+            closeOnClick: false,
+            draggable: true
+        });
+    });
+</script>
+
+</body>
+</html>

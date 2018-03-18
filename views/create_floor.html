@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="./javascripts/jquery.js"></script>
+    <script>var $ = jQuery.noConflict(true);</script>
+    <script type="text/javascript" src="./javascripts/materialize.js"></script>
+    <link rel="stylesheet" href="./stylesheets/materialize.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/profile.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/style.css" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        .toast {
+            word-break: break-word; 
+
+
+        .row {
+            margin-bottom: 0;
+        }
+
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media only screen and (min-width: 993px) {
+            nav a.button-collapse {
+                display: block;
+            }
+        }
+
+        nav {
+            height: 64px;
+        }
+
+        @keyframes bodyrender {
+            0% {
+                opacity: 0;
+                background-color: #404040;
+            }
+
+            100% {
+                opacity: 1;
+                background-color: #404040;
+            }
+        }
+
+        body {
+            animation-name: bodyrender;
+            animation-timing-function: ease-in-out;
+            animation-duration: 0.5s;
+            color: white;
+        }
+
+
+        .lightdiv {
+            cursor: pointer;
+            padding: 10px;
+            margin: 0px 10px;
+        }
+
+
+
+        .mdi-spin {
+            -webkit-animation: mdi-spin 10s infinite linear;
+            animation: mdi-spin 10s infinite linear;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+
+
+
+        @-webkit-keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        @keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        .deviceparent:hover {
+            box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+            width: 96%;
+        }
+
+
+        .deviceparent {
+            background-color: #404040;
+            width: 90%;
+            padding: 20px;
+        }
+
+        .frame {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+        }
+
+        .modal.bottom-sheet {
+            max-height: 100%;
+            height: 100%;
+        }
+
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            height:2px;
+            background: transparent;
+            margin-top:10px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            height:2px;
+            margin-top:10px
+        }
+
+</style>
+<script>
+        var socket = io.connect("http://localhost:100");
+        socket.on('save', function (res) {
+            if(res.message="success")
+            {
+                document.location.href="save";
+            }
+        })
+        function save()
+        {
+            var floorname = document.getElementById("floorname").value;
+            var selectfloor = document.getElementById("selectfloor").value;
+             var roomname = document.getElementById("room").value;
+            
+            socket.emit('save', {FloorName:floorname, SelectFloor:selectfloor,RoomName:room});
+        }
+        /*function redirect()
+        {
+            socket.emit('redirect',{data:'test'});
+        }
+        */
+</script>
+<script>
+        var socket = io.connect("http://localhost:100");
+        socket.on('save', function (res) {
+            if(res.message="success")
+            {
+                document.location.href="save";
+            }
+        })
+        function save()
+        {
+            var floor = document.getElementById("floor").value;
+             var roomname = document.getElementById("room").value;
+            
+            socket.emit('save', {floor:floor,RoomName:room});
+        }
+        /*function redirect()
+        {
+            socket.emit('redirect',{data:'test'});
+        }
+        */
+</script>
+<script>
+        var socket = io.connect("http://localhost:100");
+        socket.on('save', function (res) {
+            if(res.message="success")
+            {
+                document.location.href="save";
+            }
+        })
+        
+        function save()
+        {
+            var selectfloor = document.getElementById("selectfloor").value;
+            var roomname = document.getElementById("room").value;
+             var devicename = document.getElementById("devicename").value;
+            
+            socket.emit('login', {FloorName:floorname, SelectFloor:selectfloor,RoomName:room});
+        }
+        /*function redirect()
+        {
+            socket.emit('redirect',{data:'test'});
+        }
+        */
+         
+    </script>
+
+
+
+
+
+
+</head>
+<body class="row" style="background-color:#303030">
+<nav style="background-color:#ffa500">
+    <div class="nav-wrapper row">
+        <div class="col l2 m2 s2 left">
+                <span>
+                    <a href="home">
+                        <img src="images/dsn_pri_logo2.png" height="100%" />
+                    </a>
+                </span>
+        </div>
+
+        <div class="col l8 m8 s8 center ">
+            <span>Create New Space</span>
+        </div>
+        <div class="col l2 m2 s2 right">
+            <a href="#" data-activates="mobileview" class="button-collapse right"><i class="material-icons">menu</i></a>
+            <ul id="mobileview" class="side-nav">
+                <li>
+                    <div class="userView">
+                        <div class="background" style="background-color:#404040"></div>
+                        <a href="edit_profile" class="waves-effect circle red">
+                            <span style="padding: 20px;font-size: 30px;position: relative;top: 10px;left:0">D</span>
+                        </a>
+                       <% if (user_info) { %>
+   
+                            <a href="edit_profile"><span class="white-text name"><%= user_info.name %></span></a>
+                            <a href="edit_profile"><span class="white-text email"><%= user_info.email %></span></a>
+                    <% } %>
+                    </div>
+                </li>
+                <!--<li><div class="divider"></div></li>-->
+                <!--<li><a class="subheader">Subheader</a></li>-->
+                <li><a href="home" class="waves-effect waves-orange"><i class="material-icons">store</i>Home</a></li>
+                <li><a href="create_floor" class="waves-effect waves-orange"><i class="material-icons">create_new_folder</i>Create New Space</a></li>
+                <li><a href="edit_floor" class="waves-effect waves-orange"><i class="material-icons">mode_edit</i>Edit Space</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="temp_control" class="waves-effect waves-orange"><i class="material-icons">ac_unit</i>Temperature Control</a></li>
+                <li><a href="analytics" class="waves-effect waves-orange"><i class="material-icons">multiline_chart</i>Analytics</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="settings" class="waves-effect waves-orange"><i class="material-icons">settings</i>Settings</a></li>
+                <li id="logout"><a href="/logout" class="waves-effect waves-orange"><i class="material-icons">settings_power</i>Sign Out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="row">&nbsp;</div>
+
+<form action="/create_floor" method="post">
+    <div class="row">
+        <div class="col l4 m4 s12 center" style="margin:20px 0px">
+            <a class="waves-effect waves-light btn orange" href="#modal1">Add Floor</a>
+        </div>
+        <div id="modal1" class="modal bottom-sheet" style="background-color:#404040">
+            <div class="modal-content " style="background-color:#404040">
+                <h5 class="center">Add New Floor</h5>
+                <div class="col l12 m12 s12 center " style="background-color:#404040;padding:0">
+                    <div class="input-field col l12 m12 s12 " style="margin-top:10px;color:white;background-color:#404040;padding:0">
+                        <i class="material-icons prefix">edit</i>
+                        <input id="floorname" type="text" name="floor" required>
+                        <label for="floorname">FloorName</label>
+                    </div>
+                   
+                </div>
+                </div>
+                <div class="modal-footer"  style="background-color:#404040;padding:0;padding-right:20px">
+                    <button class="modal-action modal-close waves-effect orange waves-light btn" type="submit" onclick="materialtoast('New Floor Added', 2000, 'red')">save<i class="material-icons right">send</i></button>
+</form>
+
+        </div>
+    </div>
+
+    <div class="col l4 m4 s12 center" style="margin:20px 0px">
+        <a class="waves-effect waves-light btn orange" href="#modal2">Add Room</a>
+    </div>
+    <div id="modal2" class="modal bottom-sheet" style="background-color:#404040">
+        <div class="modal-content " style="background-color:#404040">
+            <h5 class="center">Add New Room</h5>
+        <form action="/create_room" method="post">
+            <div class="col l12 m12 s12 center">
+                <div class="input-field col s12" input id="selectfloor">
+                    <select>
+                        <option>Select a Floor</option>
+                        <% if (floordata){ %>
+                        <option value="<%= floordata.floor_name %>"><%= floordata.floor_name %></option>
+                        <% } %>
+                    </select>
+                    <label for="selectfloor">SelectFloor</label>
+                </div>
+            </div>
+            <div class="col l12 m12 s12 center " style="background-color:#404040;padding:0">
+                <div class="input-field col l12 m12 s12 " style="margin-top:10px;color:white;background-color:#404040;padding:0">
+                    <i class="material-icons prefix">edit</i>
+                    <input id="roomname" type="text" name="room" required>
+                    <label for="roomname">RoomName</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background-color:#404040;padding:0;padding-right:20px">
+             <button class="modal-action modal-close waves-effect orange waves-light btn" type="submit" onclick="materialtoast('New Room Added', 2000, 'red')">save<i class="material-icons right">send</i></button>
+        </div>
+        </form>
+    </div>
+
+
+
+
+    <div class="col l4 m4 s12 center" style="margin:20px 0px">
+        <a class="waves-effect waves-light btn orange" href="#modal3">Add Device</a>
+    </div>
+    <div id="modal3" class="modal bottom-sheet" style="background-color:#404040">
+        <div class="modal-content " style="background-color:#404040">
+            <h5 class="center">Add New Device</h5>
+        <form action="/create_device" method="post">
+            <div class="col l12 m12 s12 center">
+                <div class="input-field col s12">
+                    <select name="selectfloor" >
+                        <option>Select a Floor</option>
+                       <% if (floordata){ %>
+                        <option value="<%= floordata.floor_name %>" selected><%= floordata.floor_name %></option>
+                        <% } %>
+                    </select>
+                    <label>Select Floor</label>
+                </div>
+            </div>
+            <div class="col l12 m12 s12 center">
+                <div class="input-field col s12">
+                    <select name="selectRoom">
+                        <option>Select a room</option>
+                        <% if (room_data){ %>
+                        <option value="<%= room_data.room_name %>" selected><%= room_data.room_name %></option>
+                        <% } %>
+                    </select>
+                    <label>Select Room</label>
+                </div>
+            </div>
+            <div class="col l12 m12 s12 center " style="background-color:#404040;padding:0">
+                <div class="input-field col l12 m12 s12 " style="margin-top:10px;color:white;background-color:#404040;padding:0">
+                    <i class="material-icons prefix">edit</i>
+                    <input id="devicename" type="text" name="device" required>
+                    <label for="devicename">Device Name</label>
+                </div>
+            </div>
+            <div class="col l12 m12 s12 center " style="background-color:#404040;padding:0">
+                <div class="input-field col l12 m12 s12 " style="margin-top:10px;color:white;background-color:#404040;padding:0">
+                    <i class="material-icons prefix">edit</i>
+                    <input id="devicename" type="text" name="channel" required>
+                    <label for="devicename">Channel No</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background-color:#404040;padding:0;padding-right:20px">
+             <button class="modal-action modal-close waves-effect orange waves-light btn" type="submit" onclick="materialtoast('New Device Added', 2000, 'red')" function2();>save<i class="material-icons right">send</i></button>
+        </div>
+    </div>
+    </form>
+
+
+
+</div>
+
+<br />
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $("#deletemegf").click(function () {
+            if (confirm('This will delete and clear all the settings for Ground Floor. Proceed?')) {
+                $('#groundfloor').remove();
+                materialtoast('Ground Floor deleted', Infinity, 'red');
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("#deletemeff").click(function () {
+            if (confirm('This will delete and clear all the settings for First Floor. Proceed?')) {
+                $('#firstfloor').remove();
+                materialtoast('First Floor deleted', Infinity, 'red');
+            }
+            else {
+                // Do nothing!
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal').modal();
+    });
+
+
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+
+
+    $(document).ready(function () {
+        $(".button-collapse").sideNav({
+            menuWidth: 280,
+            edge: 'right',
+            closeOnClick: false,
+            draggable: true
+        });
+    });
+</script>
+
+</body>
+</html>

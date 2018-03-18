@@ -1,0 +1,47 @@
+@keyframes bodyrender {
+    0% {
+        opacity:0;
+        background-color:#303030;
+    }
+    100% {
+        opacity:1;
+        background-color:#303030;
+    }
+}
+
+body{
+    animation-name: bodyrender;
+    animation-timing-function: ease-in-out;
+    animation-duration: 0.5s;
+    color:white;
+}
+
+
+
+
+
+
+.toast {
+    word-break: break-all;
+}
+
+.row {
+    margin-bottom: 0;
+}
+
+
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+hr{
+    opacity:0.2
+}
+
+.smallbottomcards{
+    background-color:#404040;
+    margin:0px 30px
+}

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="./javascripts/jquery.js"></script>
+    <script>var $ = jQuery.noConflict(true);</script>
+    <script type="text/javascript" src="./javascripts/materialize.js"></script>
+    <script type="text/javascript" src="./javascripts/amcharts.js" ></script>
+    <script type="text/javascript" src="./javascripts/serial.js" ></script>
+    <link rel="stylesheet" href="./stylesheets/materialize.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/profile.css" media="screen,projection" />
+    <link rel="stylesheet" href="./stylesheets/innercss.css" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        @media only screen and (min-width: 993px)
+        {
+            nav a.button-collapse
+            {
+                display: block;
+            }
+        }
+
+        nav {
+            height: 64px;
+        }
+
+
+        .knob, .knob-clean {
+            width: 200px;
+            height: 200px;
+
+            display: inline-block;
+            margin: 1em;
+
+            position: relative;
+        }
+
+        .knob .knob-knob {
+            transition: width .2s, height .2s;
+            background-color: #111 !important;
+            border: 2px solid #222;
+            box-shadow: 0px 0px 20px rgba(0,0,0,1), 0px 10px 5px rgba(0,0,0,.7), inset 0px 10px 10px rgba(255,255,255,.05);
+        }
+
+        .knob .knob-stroke {
+            stroke-width: 20% !important;
+            transition: stroke-width .2s;
+        }
+
+        .knob.grab .knob-stroke {
+            stroke-width: 10% !important;
+        }
+
+        .knob .knob-pointer {
+            background: #3ff !important;
+        }
+
+        .knob .knob-knob::before {
+            position: absolute;
+            left: 10%;
+            top: 10%;
+            width: 70%;
+            height: 70%;
+            content: " ";
+            background: linear-gradient(-25deg, rgba(255,255,255,0) 60%,rgba(255,255,255,.07));
+            z-index: 3;
+            filter: blur(1px);
+            border-radius: 100%;
+        }
+
+        .knob.grab .knob-knob {
+            width: 80% !important;
+            height: 80% !important;
+        }
+
+        .knob .knob-pointer {
+            box-shadow: inset 0px 0px 5px rgba(0,0,0,1), 0px 0px 0px 1px rgba(255,255,255,.1);
+        }
+
+        .controlbutton{
+            color:black;
+            padding:10px 20px;
+        }
+        .deviceparent:hover {
+            box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.3);
+            width: 96%;
+        }
+
+
+        .deviceparent {
+            background-color: #404040;
+            width: 90%;
+            padding: 20px;
+        }
+
+        .frame {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+        }
+
+        .mdi-spin {
+            -webkit-animation: mdi-spin 10s infinite linear;
+            animation: mdi-spin 10s infinite linear;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+
+
+
+        @-webkit-keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+        @keyframes mdi-spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(359deg);
+                transform: rotate(359deg);
+            }
+        }
+
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            height:2px;
+            background: transparent;
+            margin-top:10px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            height:2px;
+            margin-top:10px
+        }
+
+
+    </style>
+
+    <script>
+        var chart;
+
+        var chartData = [
+            {
+                "timeline": '00:00',
+                "Graph 1": 1567,
+                "Graph 2": 683,
+            },
+
+            {
+                "timeline": '01:00',
+                "Graph 1": 1683,
+                "Graph 2": 721,
+            },
+            {
+                "timeline": '02:00',
+                "Graph 1": 1691,
+                "Graph 2": 737,
+            },
+            {
+                "timeline": '03:00',
+                "Graph 1": 1298,
+                "Graph 2": 680,
+            },
+            {
+                "timeline": '04:00',
+                "Graph 1": 1275,
+                "Graph 2": 664,
+            },
+            {
+                "timeline": '05:00',
+                "Graph 1": 1246,
+                "Graph 2": 648,
+            },
+            {
+                "timeline": '06:00',
+                "Graph 1": 1218,
+                "Graph 2": 637,
+            },
+            {
+                "timeline": '06:00',
+                "Graph 1": 1213,
+                "Graph 2": 633,
+            },
+            {
+                "timeline": '07:00',
+                "Graph 1": 1199,
+                "Graph 2": 621,
+            },
+            {
+                "timeline": '08:00',
+                "Graph 1": 1110,
+                "Graph 2": 210,
+            },
+            {
+                "timeline": '09:00',
+                "Graph 1": 1165,
+                "Graph 2": 232,
+            },
+            {
+                "timeline": '10:00',
+                "Graph 1": 1145,
+                "Graph 2": 219,
+            },
+            {
+                "timeline": '11:00',
+                "Graph 1": 1163,
+                "Graph 2": 201,
+            },
+            {
+                "timeline": '12:00',
+                "Graph 1": 1180,
+                "Graph 2": 285,
+            },
+        ];
+
+        AmCharts.ready(function () {
+            // SERIAL CHART
+            chart = new AmCharts.AmSerialChart();
+
+            chart.dataProvider = chartData;
+            //chart.marginTop = 10;
+            chart.categoryField = "timeline";
+            chart.color = "#ffffff";
+
+            // AXES
+            // Category
+            var categoryAxis = chart.categoryAxis;
+            categoryAxis.gridAlpha = 0.07;
+            categoryAxis.axisColor = "#000000";
+            categoryAxis.startOnAxis = true;
+
+            // Value
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.stackType = "regular"; // this line makes the chart "stacked"
+            valueAxis.gridAlpha = 0.07;
+            valueAxis.title = "Consumption";
+            valueAxis.titleColor = "#ffffff";
+            valueAxis.color = "#ffffff";
+            chart.addValueAxis(valueAxis);
+
+            // GUIDES are vertical (can also be horizontal) lines (or areas) marking some event.
+            // first guide
+            var guide1 = new AmCharts.Guide();
+            //guide1.category = "2001";
+            //guide1.lineColor = "#CC0000";
+            //guide1.lineAlpha = 1;
+            //guide1.dashLength = 2;
+            //guide1.inside = true;
+            //guide1.labelRotation = 90;
+            //guide1.label = "G1";
+            categoryAxis.addGuide(guide1);
+
+            // second guide
+            var guide2 = new AmCharts.Guide();
+            //guide2.category = "2007";
+            //guide2.lineColor = "#CC0000";
+            //guide2.lineAlpha = 1;
+            //guide2.dashLength = 2;
+            //guide2.inside = true;
+            //guide2.labelRotation = 90;
+            //guide2.label = "G2";
+            categoryAxis.addGuide(guide2);
+
+
+            // GRAPHS
+            // first graph
+            var graph = new AmCharts.AmGraph();
+            graph.type = "line"; // it's simple line graph
+            graph.title = "Actual Usage";
+            graph.valueField = "Graph 1";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 0.6; // setting fillAlphas to > 0 value makes it area graph
+            graph.balloonText = "<i class='material-icons left'>multiline_chart</i><span style='font-size:14px; color:#000000;margin-left:10px'><b>[[value]]</b></span> (Actual)";
+            graph.hidden = false;
+            chart.addGraph(graph);
+
+            // second graph
+            graph = new AmCharts.AmGraph();
+            graph.type = "line";
+            graph.title = "Expected Usage";
+            graph.valueField = "Graph 2";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 0.6;
+            graph.balloonText = "<i class='material-icons left'>show_chart</i><span style='font-size:14px; color:#000000;margin-left:10px'><b>+[[value]]</b></span> (Expected)";
+            chart.addGraph(graph);
+
+
+
+            // LEGEND
+            var legend = new AmCharts.AmLegend();
+            legend.position = "top";
+            legend.color = "#ffffff";
+            legend.valueText = "[[value]]";
+            legend.valueWidth = 100;
+            legend.valueAlign = "left";
+            legend.equalWidths = true;
+            legend.periodValueText = "total: [[value.sum]]"; // this is displayed when mouse is not over the chart.
+            chart.addLegend(legend);
+
+            // CURSOR
+            var chartCursor = new AmCharts.ChartCursor();
+            chartCursor.cursorAlpha = 0;
+            chart.addChartCursor(chartCursor);
+
+            // SCROLLBAR
+            //var chartScrollbar = new AmCharts.ChartScrollbar();
+            //chartScrollbar.color = "#FFFFFF";
+            //chart.addChartScrollbar(chartScrollbar);
+
+            // WRITE
+            chart.write("chartdiv");
+        });
+    </script>
+
+    <script>
+
+        var chart;
+
+        var chartwodata = [];
+
+        AmCharts.ready(function () {
+            // first we generate some random data
+            generatechartwodata();
+
+            // SERIAL CHART
+            chart = new AmCharts.AmSerialChart();
+
+            chart.dataProvider = chartwodata;
+            chart.categoryField = "date";
+            chart.color = "#ffffff";
+            // data updated event will be fired when chart is first displayed,
+            // also when data will be updated. We'll use it to set some
+            // initial zoom
+            chart.addListener("dataUpdated", zoomChart);
+
+            // AXES
+            // Category
+            var categoryAxis = chart.categoryAxis;
+            categoryAxis.parseDates = true; // in order char to understand dates, we should set parseDates to true
+            categoryAxis.minPeriod = "mm"; // as we have data with minute interval, we have to set "mm" here.
+            categoryAxis.gridAlpha = 0.07;
+            categoryAxis.axisColor = "#000000";
+
+            // Value
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.gridAlpha = 0.07;
+            valueAxis.title = "Live Electricity Usage";
+            chart.addValueAxis(valueAxis);
+
+            // GRAPH
+            var graph = new AmCharts.AmGraph();
+            graph.type = "line"; // try to change it to "column"
+            graph.title = "red line";
+            graph.valueField = "visits";
+            graph.lineAlpha = 1;
+            graph.lineColor = "#ffff00";
+            graph.fillAlphas = 0.07; // setting fillAlphas to > 0 value makes it area graph
+            chart.addGraph(graph);
+
+            // CURSOR
+            var chartCursor = new AmCharts.ChartCursor();
+            chartCursor.cursorPosition = "mouse";
+            chartCursor.categoryBalloonDateFormat = "JJ:NN, DD MMMM";
+            chart.addChartCursor(chartCursor);
+
+            // SCROLLBAR
+            //var chartScrollbar = new AmCharts.ChartScrollbar();
+            //
+            //chart.addChartScrollbar(chartScrollbar);
+
+            // WRITE
+            chart.write("chartdiv2");
+        });
+
+        // generate some random data, quite different range
+        function generatechartwodata() {
+            // current date
+            var firstDate = new Date();
+            // now set 1000 minutes back
+            firstDate.setMinutes(firstDate.getDate() - 1000);
+
+            // and generate 1000 data items
+            for (var i = 0; i < 1000; i++) {
+                var newDate = new Date(firstDate);
+                // each time we add one minute
+                newDate.setMinutes(newDate.getMinutes() + i);
+                // some random number
+                var visits = Math.round(Math.random() * 40) + 10;
+                // add data item to the array
+                chartwodata.push({
+                    date: newDate,
+                    visits: visits
+                });
+            }
+        }
+
+        // this method is called when chart is first inited as we listen for "dataUpdated" event
+        function zoomChart() {
+            // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
+            chart.zoomToIndexes(chartwodata.length - 40, chartwodata.length - 1);
+        }
+    </script>
+
+</head>
+<body class="row" style="background-color:#303030">
+
+<nav style="background-color:#ffa500">
+    <div class="nav-wrapper row">
+        <div class="col l2 m2 s2 left">
+                <span>
+                    <a href="home">
+                        <img src="images/dsn_pri_logo2.png" height="100%" />
+                    </a>
+                </span>
+        </div>
+
+        <div class="col l8 m8 s8 center ">
+            <span>Analytics</span>
+        </div>
+        <div class="col l2 m2 s2 right">
+            <a href="#" data-activates="mobileview" class="button-collapse right"><i class="material-icons">menu</i></a>
+            <ul id="mobileview" class="side-nav">
+                <li>
+                    <div class="userView">
+                        <div class="background" style="background-color:#404040"></div>
+                        <a href="edit_profile" class="waves-effect circle red">
+                            <span style="padding: 20px;font-size: 30px;position: relative;top: 10px;left:0">D</span>
+                        </a>
+                        <% if (user_info) { %>
+   
+                            <a href="edit_profile"><span class="white-text name"><%= user_info.name %></span></a>
+                            <a href="edit_profile"><span class="white-text email"><%= user_info.email %></span></a>
+                    <% } %>
+                    </div>
+                </li>
+                <!--<li><div class="divider"></div></li>-->
+                <!--<li><a class="subheader">Subheader</a></li>-->
+                <li><a href="home" class="waves-effect waves-orange"><i class="material-icons">store</i>Home</a></li>
+                <li><a href="create_floor" class="waves-effect waves-orange"><i class="material-icons">create_new_folder</i>Create New Space</a></li>
+                <li><a href="edit_floor" class="waves-effect waves-orange"><i class="material-icons">mode_edit</i>Edit Space</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="temp_control" class="waves-effect waves-orange"><i class="material-icons">ac_unit</i>Temperature Control</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="settings" class="waves-effect waves-orange"><i class="material-icons">settings</i>Settings</a></li>
+                <li id="logout"><a href="/logout" class="waves-effect waves-orange"><i class="material-icons">settings_power</i>Sign Out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+<div class="row center" style="padding:10px">
+
+    <div class="col l12 m12 s12 center">&nbsp;</div>
+
+
+    <div class="col l1 hide-on-med-and-down">&nbsp;</div>
+
+    <div class="col l5 m12 s12 center card z-depth-2  waves-effect" style="background-color:#404040;margin-top:0px;margin-right:10px ">
+        <!--<div id="chartdiv" style="width:100%; height:292px;color:white"></div>-->
+
+        <div id="chartdiv" style="width:100%; height:300px;color:white"></div>
+    </div>
+
+    <div class="col l5 m12 s12 center card z-depth-2 waves-effect smallbottomcards">
+        <div id="chartdiv2" style="width:100%; height:300px;color:white"></div>
+    </div>
+
+</div>
+
+<br />
+<div class="row z-depth-2" id="masterbedroom" style="background-color:#505050;padding:10px;position:relative;height:310px">
+
+        <span class="center col l12 m12 s12" style="padding:20px">
+            All Devices Connected
+        </span>
+
+    <div id="makeMeScrollable" class="center" style="position:relative;overflow-x: scroll;overflow-y:hidden;white-space: nowrap;height:230px;width:100%">
+
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">lightbulb_outline</i>
+                <br>
+                <span style="color:#ffa500">10 Lights On</span>
+                <hr>
+                20 Connected
+            </div>
+        </div>
+
+        <div id="fanclassparentgf" style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons mdi-spin" id="fanclassgf" style="font-size:100px">toys</i>
+                <br>
+                <span style="color:#ffa500"><span id="fancountgf">2</span> Fans On</span>
+                <hr>
+                3 Connected
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">ac_unit</i>
+                <br>
+                <span style="color:#ffa500">2 ACs On</span>
+                <hr>
+                4 Connected
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">device_hub</i>
+                <br>
+                <span style="color:#ffa500">5 Devices On</span>
+                <hr>
+                6 Connected
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">tv</i>
+                <br>
+                <span style="color:#ffa500">1 TV On</span>
+                <hr>
+                3 Connected
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">videogame_asset</i>
+                <br>
+                <span style="color:#ffa500">1 XBox On</span>
+                <hr>
+                1 Connected
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">local_laundry_service</i>
+                <br>
+                <span style="color:#ffa500">0 Laundry Machines On</span>
+                <hr>
+                1 Connected
+            </div>
+        </div>
+
+        <div style="padding:0px;width:220px;display:inline-block">
+            <div class="card center card z-depth-2 waves-effect deviceparent" style="padding:20px">
+                <i class="material-icons" style="font-size:100px">kitchen</i>
+                <br>
+                <span style="color:#ffa500">2 Refrigerators On</span>
+                <hr>
+                2 Connected
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $(".button-collapse").sideNav({
+            menuWidth: 280, // Default is 300
+            edge: 'right', // Choose the horizontal origin
+            closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+            draggable: true
+        });
+
+    });
+
+</script>
+
+
+
+</body>
+
+</html>
